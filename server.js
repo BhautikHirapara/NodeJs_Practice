@@ -17,14 +17,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
 cloudinary.config({
-  // cloud_name: 'de8drwp58',                            
-  // api_key: '159179789522737',                         
-  // api_secret: 'AADebmc5mmL1_fKROdA-GCfOhO8',          
-  // secure: true
-
-  cloud_name: 'dg9crshuw',                            //Here you add your cloud names
-  api_key: '452743155264945',                         //Here you add your api_key
-  api_secret: 'g4v-YUYdaHMcts9FZyroiN5_Sc8',          //Here you add your api_secret
+  cloud_name: 'de8drwp58',                            
+  api_key: '159179789522737',                         
+  api_secret: 'AADebmc5mmL1_fKROdA-GCfOhO8',          
   secure: true
 });
 
@@ -108,20 +103,15 @@ app.get('/blog', async (req, res) => {
       let posts = [];
 
       if(req.query.category){
-          // Obtain the published "posts" by category
           posts = await blogservice.getPublishedPostByCategory(req.query.category);
       }else{
-          // Obtain the published "posts"
           posts = await blogservice.getPublishedPosts();
       }
 
-      // sort the published posts by postDate
       posts.sort((a,b) => new Date(b.postDate) - new Date(a.postDate));
 
-      // get the latest post from the front of the list (element 0)
       let post = posts[0]; 
 
-      // store the "posts" and "post" data in the viewData object (to be passed to the view)
       viewData.posts = posts;
       viewData.post = post;
   }catch(err){
@@ -129,16 +119,12 @@ app.get('/blog', async (req, res) => {
   }
 
   try{
-      // Obtain the full list of "categories"
       let categories = await blogservice.getCategories();
-
-      // store the "categories" data in the viewData object (to be passed to the view)
       viewData.categories = categories;
   }catch(err){
       viewData.categoriesMessage = "no results"
   }
 
-  // render the "blog" view with all of the data (viewData)
   res.render("blog", {data: viewData,  message: "no results"})
 
 });
@@ -146,27 +132,20 @@ app.get('/blog', async (req, res) => {
 
 app.get('/blog/:id', async (req, res) => {
 
-  // Declare an object to store properties for the view
   let viewData = {};
 
   try{
 
-      // declare empty array to hold "post" objects
       let posts = [];
 
-      // if there's a "category" query, filter the returned posts by category
       if(req.query.category){
-          // Obtain the published "posts" by category
           posts = await blogservice.getPublishedPostByCategory(req.query.category);
       }else{
-          // Obtain the published "posts"
           posts = await blogservice.getPublishedPosts();
       }
 
-      // sort the published posts by postDate
       posts.sort((a,b) => new Date(b.postDate) - new Date(a.postDate));
 
-      // store the "posts" and "post" data in the viewData object (to be passed to the view)
       viewData.posts = posts;
 
   }catch(err){
@@ -174,23 +153,19 @@ app.get('/blog/:id', async (req, res) => {
   }
 
   try{
-      // Obtain the post by "id"
       viewData.post = await blogservice.getPostById(req.params.id);
   }catch(err){
       viewData.message = "no results"; 
   }
 
   try{
-      // Obtain the full list of "categories"
       let categories = await blogservice.getCategories();
 
-      // store the "categories" data in the viewData object (to be passed to the view)
       viewData.categories = categories;
   }catch(err){
       viewData.categoriesMessage = "no results"
   }
 
-  // render the "blog" view with all of the data (viewData)
   res.render("blog", {data: viewData,  message: "no results"})
 });
 
@@ -241,7 +216,7 @@ app.use(function(req,res,next){
   next();
 }); 
 
-// as per given in question
+// As per given in question
 app.use(function(req,res,next){
   let route = req.path.substring(1);
   app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
