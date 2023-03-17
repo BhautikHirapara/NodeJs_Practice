@@ -1,0 +1,48 @@
+<form class="row2 g-3" method="post" action="/posts/add">
+    <br>
+    <div class="m-5 hi">
+        <h2>Feature Image</h2> <hr>
+            <div class="col-md-6">
+                <label for="inputTitle" class="form-label">Feature Image: </label> <br>
+                <input class="img form-control" id="image" name="image" type="file" />
+            </div>
+
+            <br> <br> <br> <br>
+        <h2>Post Content</h2> <hr>
+
+            <div class="col-md-12">
+                <label for="inputTitle" class="form-label">Title: </label>
+                <input type="text" class="form-control" id="inputCity" name="title">
+            </div> <br><br>
+
+            <div class="col-12">
+                <label for="inputBody" class="form-label">Body: </label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="body"></textarea>
+            </div>
+            <br><br>
+            <div class="col-md-6">
+            <label for="inputState" class="form-label">Categories: </label>
+            <select class="form-select" aria-label="Default select example" name="category">
+                <option value="1" selected>Technology</option>
+                <option value="2">Gaming</option>
+                <option value="3">Fashion</option>
+                <option value="4">Education</option>
+                <option value="5">Wellness</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+            <label for="inputState" class="form-label">Visibility: </label>
+            <div class="form-check mt-1">
+                <input class="form-check-input" type="checkbox" id="gridCheck" name="published">
+                <label class="form-check-label" for="gridCheck">
+                  Published
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-12">
+                <input type="submit" class="btn btn-primary pull-right" value="Add Posts" />
+            </div>
+        </div>
+    </form>

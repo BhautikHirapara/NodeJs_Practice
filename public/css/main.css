@@ -1,0 +1,19 @@
+*{
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  table{
+    width: 1200px;
+    margin: auto;
+    background: none;
+  }
+  
+  td{
+    padding: 50px 50px;
+    font-size: larger;
+  }
+
+  .row{
+    margin-top: 18px;
+    background-color:  rgba(195, 68, 68, 0.304);
+  }
