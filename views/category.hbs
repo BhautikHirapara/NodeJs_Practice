@@ -1,6 +1,6 @@
 <div class="row">
  <div class="col-md-12">
- <h2>Posts</h2>
+ <h2>Categories</h2> <a href="/categories/add" class="btn btn-success pull-right">Add Category</a>
  <hr />
  <div class="table-responsive">
             <table class="table">
@@ -9,19 +9,45 @@
                     <th>Category Name</th>                
                 </thead>
                 <tbody>
-                {{#each categories}}
+                {{#each data}}
                 <tr>                    
                     <td>{{id}}</td>
                     <td>{{category}}</a></td>
+                    {{!-- <a href="categories/delete/categoryId">Delete a Category</a> --}}
                 </tr>
                 {{/each}}
                 </tbody>
             </table>
          </div>
     </div>
-    {{#unless categories}}
+    {{#unless data}}
         <div class="col-md-12 text-center">
             <strong>{{message}}</strong>
         </div>
     {{/unless}}
 </div>  
+
+{{!-- <div class="row">
+    <div class="col-md-12">
+        {{#each Category}}
+        <h2>{{category}} - category: {{categoryId}}</h2>
+        <hr />
+        <form method="post" action="/category/update">
+          <input class="form-control" id="categoryId" name="categoryId" type="hidden" value="{{categoryId}}" />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="categoryName">category Name</label>
+                        <input class="form-control" id="categoryName" name="categoryName" type="text" value="{{category}}" />
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <input type="submit" class="btn btn-primary pull-right" value="Update category" />
+            <br />
+            <br />
+            <br />
+        </form>
+        {{/each}}
+    </div>
+</div> --}}

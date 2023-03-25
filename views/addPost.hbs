@@ -7,7 +7,7 @@
                 <input class="img form-control" id="image" name="image" type="file" />
             </div>
 
-            <br> <br> <br> <br>
+            <br><br> <br>
         <h2>Post Content</h2> <hr>
 
             <div class="col-md-12">
@@ -34,11 +34,26 @@
             <div class="col-md-6">
             <label for="inputState" class="form-label">Visibility: </label>
             <div class="form-check mt-1">
-                <input class="form-check-input" type="checkbox" id="gridCheck" name="published">
+                <input class="form-check-input" type="checkbox" id="gridCheck" name="isPublished">
                 <label class="form-check-label" for="gridCheck">
                   Published
                 </label>
               </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                        <label for="department">Department</label>
+                        {{#if categories}}
+                        <select class="form-control" name="department" id="department">
+                        {{#each categories}}
+                        <option value="{{categoryId}}">{{category}}</option>
+                        {{/each}}
+                        </select>
+                        {{else}}
+                        <div>No Departments</div>
+                        {{/if}}
+                    </div>
             </div>
             
             <div class="col-12">

@@ -39,7 +39,7 @@ function onHttpStart() {
 
 blogservice.initialize().then(() => { 
   app.listen(PORT, onHttpStart);}).catch((errmsg) => {
-  console.error(errmsg);
+  console.error(errmsg + "I'm from server.js");
 })
 
 app.get('/posts', function(req, res){
@@ -60,43 +60,54 @@ app.get('/posts', function(req, res){
 
 
 app.get("/posts/add", async (req, res) => {
-  res.render("addPost");
+  blogservice.getCategories()
+  .then((data)=> res.render("addPost", {categories: data}))
+  .catch(() => res.render("addPost", {categories: []}))
 });
 
+// app.post("/post/update", function(req, res){
+//   blogservice.updatePost(req.body)
+//   .then(res.redirect('/posts'))
+// });
+
 app.post("/posts/add", upload.single('image'), function (req, res) {
+  console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+  blogservice.addpost(req.body)
+  .then(res.redirect('/posts'))
+  .catch((err) => res.json({"message": err})) 
+  console.log("qqqqqqqqqqqqqqqqqqqqqq")
+  
   console.log(req.body)
   
   
-  let streamUpload = (req) => {
-    return new Promise((resolve, reject) => {
-        let stream = cloudinary.uploader.upload_stream(
-          (error, result) => {
-            if (result) {
-              resolve(result);
-            } else {
-              reject(error);
-            }
-          }
-          );
-          // streamifier.createReadStream(req.file.buffer).pipea(stream);
-    });
-};
+//   let streamUpload = (req) => {
+//     return new Promise((resolve, reject) => {
+//         let stream = cloudinary.uploader.upload_stream(
+//           (error, result) => {
+//             if (result) {
+//               resolve(result);
+//             } else {
+//               reject(error);
+//             }
+//           }
+//           );
+//           // streamifier.createReadStream(req.file.buffer).pipea(stream);
+//     });
+// };
 
-async function upload(req) {
-  let result = await streamUpload(req);
-  console.log(result);
-}
+// async function upload(req) {
+//   let result = await streamUpload(req);
+//   console.log(result);
+// }
 
-upload(req);
+// upload(req);
 
-blogservice.addpost(req.body)
-.then(res.redirect('/posts'))
-.catch((err) => res.json({"message": err})) 
+console.log("eeeeeeeeeseeeeeeeeeeeeeeeeeeeee")
 
 });
 
 app.get('/blog', async (req, res) => {
-
+  
   let viewData = {};
 
   try{
@@ -170,11 +181,21 @@ app.get('/blog/:id', async (req, res) => {
 });
 
 
-app.get('/categories', function(req, res){
-  blogservice.getCategories()
-  .then((data) => res.render("category",{categories:data}))
-  .catch(() => res.render("category",{message: "no results"}))
-})
+
+// app.get('/categories', function(req, res){
+//   blogservice.getCategories().then(function(data) {
+//     res.render("category", { data });
+//   }).catch(function(err) {
+//     res.render("category", { message: "error" });
+//   });
+// })
+app.get("/categories", function(req,res) {
+  blogservice.getCategories().then(function(data) {
+    res.render("category", { data });
+  }).catch(function(err) {
+    res.render("category", { message: "error" });
+  });
+});
 
 app.get('/posts/:id', (req, res) => {
   blogservice.getPostById(req.params.id)
@@ -223,3 +244,41 @@ app.use(function(req,res,next){
   app.locals.viewingCategory = req.query.category;
   next();
 });
+
+// assi. 5
+
+app.get("/categories/add", function(req,res) {
+  res.render("addCategory");
+});
+
+app.post("/categories/add", function(req,res) {
+  blogservice.addCategory(req.body).then(function(data) {
+    res.redirect('/categories');
+  }).catch(function(err) {
+    res.status(500).send("Unable to Add");
+  })
+});
+
+app.get("/categories/delete/:categoryId", function (req, res) {
+  blogservice.deleteCategoryById(req.params.id).then((data) => {
+    res.redirect("/categories");
+    console.log(data);
+  }).catch((data) => {
+    console.log(data);
+    res.status(500).render({
+      message: "Unable to Remove Category / Category not found"
+    });
+  })
+})
+
+app.get("/posts/delete/:postId", function (req, res) {
+  blogservice.deletePostById(req.params.id).then((data) => {
+    res.redirect("/posts");
+    console.log(data);
+  }).catch((data) => {
+    console.log(data);
+    res.status(500).render({
+      message: "Unable to Remove Post / Post not found"
+    });
+  })
+})
