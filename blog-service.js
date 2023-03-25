@@ -1,8 +1,3 @@
-// const fs = require("fs"); 
-
-// var posts = [];
-// var categories = [];
-
 const Sequelize = require('sequelize');
 var sequelize = new Sequelize('vpmbdmqu', 'vpmbdmqu', '2GfMwsj6URsryAteltTFSi6LERsWO-3h', {
     host: 'isilo.db.elephantsql.com',
@@ -35,42 +30,7 @@ var sequelize = new Sequelize('vpmbdmqu', 'vpmbdmqu', '2GfMwsj6URsryAteltTFSi6LE
 
 var exports = module.exports = {}
 
-// var readPosts = function () {
-//     return new Promise(function (resolve, reject){
-//         fs.readFile('./data/posts.json', function (err, data){
-//             if(!err){
-//                 posts = JSON.parse(data)
-//                 resolve();
-//             }else{
-//                 reject("unable to read file")
-//             }
-//         })
-//     })
-// }
-
-// var readCategories = function () {
-//     return new Promise(function (resolve, reject){
-//         fs.readFile('./data/categories.json', function (err, data){
-//             if(!err){
-//                 categories = JSON.parse(data)
-//                 resolve();
-//             }else{
-//                 reject("unable to read file")
-//             }0
-//         })
-//     })
-// }
-
 exports.initialize = function () {
-    // return new Promise(function (resolve, reject) {
-    //     readPosts().then(readCategories).then(function () {
-    //         resolve()
-    //     })
-    //     .catch(function (errmsg){
-    //         console.log(errmsg)
-    //         reject(errmsg);
-    //     })
-    // })
     return new Promise((resolve, reject) => {
         sequelize.sync().then(function(Post){
             resolve();
@@ -84,15 +44,6 @@ exports.initialize = function () {
 }
 
 exports.getAllPosts = function(){
-    // return new Promise(function (resolve, reject){
-    //     if(posts.length){
-    //         resolve(posts)
-    //     }
-    //     else{
-    //         console.log("no results returned")
-    //         reject();
-    //     }
-    // })
     return new Promise((resolve, reject)=>{
         sequelize.sync().then(function(){
             resolve(Post.findAll());
@@ -103,22 +54,6 @@ exports.getAllPosts = function(){
 }
 
 exports.getPublishedPosts = function(){
-
-    // var isPublished = posts.filter(
-    //     function (posts) {
-    //         return posts.published == true;
-    //     }
-    // )
-
-    // return new Promise(function (resolve, reject){
-    //     if(!isPublished.length){
-    //         console.log("no results returned")
-    //         reject();
-    //     }
-    //     else{
-    //         resolve(isPublished)
-    //     }
-    // })
     return new Promise((resolve, reject) =>{
         sequelize.sync().then(function() {
          resolve(Post.findAll({
@@ -132,26 +67,6 @@ exports.getPublishedPosts = function(){
  });
 }
 
-// exports.getCategories = function(){
-    // return new Promise(function (resolve, reject){
-    //     if(!categories.length){
-    //         console.log("no results returned")
-    //         reject();
-    //     }
-    //     else{
-    //         resolve(categories)
-    //     }
-    // })
-//     return new Promise(function (resolve, reject) {
-//         Category.findAll().then((data) => {
-//             console.log("success")
-//             resolve(data);
-//         }).catch(() => {
-//             reject("get category error");
-//             console.log("errorrrrrrrrrrr")
-//         })
-//     });
-// }
 exports.getCategories = function () {
     return new Promise(function (resolve, reject) {
         Category.findAll().then((data) => {
@@ -159,34 +74,15 @@ exports.getCategories = function () {
             resolve(data);
         }).catch(() => {
             reject("getCategory error");
-            console.log("error")
+            console.log("errorrrrrrrrrr")
         })
     });
 }
 
 
-// NEW 
-// const d = new Date();
-// let currentDate = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
 exports.addpost = function(postData){
-    // if(!postData.published){
-    //     postData.published = false;
-    // } else{
-    //     postData.published = true;
-    // }   
-    // postData.id = posts.length+1;
-    // postData.hireDate = currentDate;
-    // posts.push(postData);
-    // return new Promise((resolve, reject) => {
-    //     resolve(posts);
-    //     if(posts.length == 0){
-    //         reject("Nothing found");
-    //     }        
-    // });
     return new Promise((resolve, reject)=>{
-        // ensure the isManager value is explicitly set to boolean
         postData.isPublished = (postData.isPublished) ? true : false;
-        // Any blank values in employeeData are set to null 
         for(var prop in postData){
             if(postData[prop] == ""){
                 postData[prop] = null;
@@ -197,6 +93,7 @@ exports.addpost = function(postData){
             title: postData.title,
             body: postData.body,
             isPublished: postData.isPublished,
+            postDate: currentDate,
             category: postData.category}));    
         }).catch(function(){
             reject("unable to create Post");
@@ -205,13 +102,6 @@ exports.addpost = function(postData){
 };
 
 exports.getPostByCategory = function(category){
-    // return new Promise((resolve, reject) => {
-    //     let filteredPost = posts.filter(posts => posts.category == category);
-    //     resolve(filteredPost);
-    //     if(filteredPost.length == 0){
-    //         reject("no results returned");
-    //     }        
-    // });
     return new Promise((resolve, reject) =>{
         sequelize.sync().then(function() {
          resolve(Post.findAll({
@@ -226,13 +116,6 @@ exports.getPostByCategory = function(category){
 }
 
 exports.getPostsByMinDate = function(minDate){
-    // return new Promise((resolve, reject) => {
-    //     let filteredPost = posts.filter(posts => posts.postDate >= minDate);
-    //     resolve(filteredPost);
-    //     if(filteredPost.length == 0){
-    //         reject("no results returned");
-    //     }        
-    // });
     return new Promise((resolve, reject) =>{
         sequelize.sync().then(function() {
             const { gte } = Sequelize.Op;
@@ -260,7 +143,7 @@ exports.getPostById = function(id){
 }
 exports.updatePost = function (data) {
     return new Promise ((resolve, reject)=>{
-        empData.isPublished = (postData.isPublished) ? true : false;
+        postData.isPublished = (postData.isPublished) ? true : false;
         for(var prop in postData){
             if(postData[prop] == ""){
                 postData[prop] = null;
@@ -268,12 +151,11 @@ exports.updatePost = function (data) {
         }
         sequelize.sync().then(function(){
             resolve(Post.update({
-                body: Sequelize.TEXT,
-                title: Sequelize.STRING,
-                postDate: Sequelize.DATE,
-                featureImage: Sequelize.STRING,
-                category: Sequelize.INTEGER,
-                isPublished: Sequelize.BOOLEAN
+                title: postData.title,
+                body: postData.body,
+                isPublished: postData.isPublished,
+                postDate: currenttDate,
+                category: postData.category
             }, {
                 where: { postId: postData.postId }
             }));
@@ -285,21 +167,6 @@ exports.updatePost = function (data) {
 
 exports.getPublishedPostByCategory = function(category){
 
-    // var isPublishedWithCategory = posts.filter(
-    //     function (posts) {
-    //         return posts.published == true && posts.category == category;
-    //     }
-    // )
-
-    // return new Promise(function (resolve, reject){
-    //     if(!isPublishedWithCategory.length){
-    //         console.log("no results returned")
-    //         reject();
-    //     }
-    //     else{
-    //         resolve(isPublishedWithCategory)
-    //     }
-    // })
     return new Promise((resolve, reject) => {
         sequelize.sync().then(function(){
             resolve(Post.findAll({
@@ -315,21 +182,6 @@ exports.getPublishedPostByCategory = function(category){
 }
 exports.getPublishedPostById = function(id){
 
-    // var getPublishedPostById = posts.filter(
-    //     function (posts) {
-    //         return posts.published == true && posts.id == id;
-    //     }
-    // )
-
-    // return new Promise(function (resolve, reject){
-    //     if(!getPublishedPostById.length){
-    //         console.log("no results returned")
-    //         reject();
-    //     }
-    //     else{
-    //         resolve(getPublishedPostById)
-    //     }
-    // })
     return new Promise((resolve, reject) => {
         sequelize.sync().then(function(){
             resolve(Post.findAll({
@@ -350,11 +202,9 @@ exports.addCategory = function (categoryData) {
             categoryData[prop] = null;
         }
     }
-    console.log("HAHA CATEGORYDATA B342" + categoryData);
-    console.log("HAHA CATEGORYNAME B342" + categoryData.categoryName);
     return new Promise(function (resolve, reject) {
         Category.create({
-            categoryName: categoryData.categoryName
+            category: categoryData.category
         }).then(() => {
             resolve("add new category");
         }).catch(() => {

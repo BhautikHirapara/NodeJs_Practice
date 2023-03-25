@@ -65,10 +65,10 @@ app.get("/posts/add", async (req, res) => {
   .catch(() => res.render("addPost", {categories: []}))
 });
 
-// app.post("/post/update", function(req, res){
-//   blogservice.updatePost(req.body)
-//   .then(res.redirect('/posts'))
-// });
+app.post("/post/update", function(req, res){
+  blogservice.updatePost(req.body)
+  .then(res.redirect('/posts'))
+});
 
 app.post("/posts/add", upload.single('image'), function (req, res) {
   console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
@@ -80,27 +80,27 @@ app.post("/posts/add", upload.single('image'), function (req, res) {
   console.log(req.body)
   
   
-//   let streamUpload = (req) => {
-//     return new Promise((resolve, reject) => {
-//         let stream = cloudinary.uploader.upload_stream(
-//           (error, result) => {
-//             if (result) {
-//               resolve(result);
-//             } else {
-//               reject(error);
-//             }
-//           }
-//           );
-//           // streamifier.createReadStream(req.file.buffer).pipea(stream);
-//     });
-// };
+  let streamUpload = (req) => {
+    return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream(
+          (error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          }
+          );
+          // streamifier.createReadStream(req.file.buffer).pipea(stream);
+    });
+};
 
-// async function upload(req) {
-//   let result = await streamUpload(req);
-//   console.log(result);
-// }
+async function upload(req) {
+  let result = await streamUpload(req);
+  console.log(result);
+}
 
-// upload(req);
+upload(req);
 
 console.log("eeeeeeeeeseeeeeeeeeeeeeeeeeeeee")
 
@@ -180,15 +180,6 @@ app.get('/blog/:id', async (req, res) => {
   res.render("blog", {data: viewData,  message: "no results"})
 });
 
-
-
-// app.get('/categories', function(req, res){
-//   blogservice.getCategories().then(function(data) {
-//     res.render("category", { data });
-//   }).catch(function(err) {
-//     res.render("category", { message: "error" });
-//   });
-// })
 app.get("/categories", function(req,res) {
   blogservice.getCategories().then(function(data) {
     res.render("category", { data });
@@ -201,11 +192,6 @@ app.get('/posts/:id', (req, res) => {
   blogservice.getPostById(req.params.id)
   .then((data) => {res.json(data);})
 });
-
-app.use('*', (req, res) => {
-  res.render("404");
-});
-
 
 //Assign4
 app.engine('.hbs', exphbs({ 
@@ -230,14 +216,12 @@ app.engine('.hbs', exphbs({
 }));
 app.set('view engine', '.hbs');
 
-// gh 
 app.use(function(req,res,next){
   let route=req.baseUrl + req.path;
   app.locals.activeRoute = (route=="/")? "/":route.replace(/\/$/,"");
   next();
 }); 
 
-// As per given in question
 app.use(function(req,res,next){
   let route = req.path.substring(1);
   app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
@@ -282,3 +266,7 @@ app.get("/posts/delete/:postId", function (req, res) {
     });
   })
 })
+
+app.use((req, res) => {
+  res.render("404");
+});

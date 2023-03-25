@@ -20,7 +20,7 @@
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="body"></textarea>
             </div>
             <br><br>
-            <div class="col-md-6">
+            {{!-- <div class="col-md-6">
             <label for="inputState" class="form-label">Categories: </label>
             <select class="form-select" aria-label="Default select example" name="category">
                 <option value="1" selected>Technology</option>
@@ -29,6 +29,20 @@
                 <option value="4">Education</option>
                 <option value="5">Wellness</option>
               </select>
+            </div> --}}
+            <div class="col-md-3">
+                <div class="form-group">
+                        <label for="department">Categories</label>
+                        {{#if categories}}
+                        <select class="form-control" name="department" id="department">
+                        {{#each categories}}
+                        <option value="{{categoryId}}">{{categoryName}}</option>
+                        {{/each}}
+                        </select>
+                        {{else}}
+                        <div>No Category</div>
+                        {{/if}}
+                    </div>
             </div>
 
             <div class="col-md-6">
@@ -41,20 +55,6 @@
               </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="form-group">
-                        <label for="department">Department</label>
-                        {{#if categories}}
-                        <select class="form-control" name="department" id="department">
-                        {{#each categories}}
-                        <option value="{{categoryId}}">{{category}}</option>
-                        {{/each}}
-                        </select>
-                        {{else}}
-                        <div>No Departments</div>
-                        {{/if}}
-                    </div>
-            </div>
             
             <div class="col-12">
                 <input type="submit" class="btn btn-primary pull-right" value="Add Posts" />
