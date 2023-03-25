@@ -4,7 +4,7 @@
 // var categories = [];
 
 const Sequelize = require('sequelize');
-var sequelize = new Sequelize('qwvdsgnu', 'qwvdsgnu', 'GIjtWJQys-tkF9ZcCOaWTPtSqlSWddtl', {
+var sequelize = new Sequelize('vpmbdmqu', 'vpmbdmqu', '2GfMwsj6URsryAteltTFSi6LERsWO-3h', {
     host: 'isilo.db.elephantsql.com',
     dialect: 'postgres',
     port: 5432,

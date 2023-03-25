@@ -202,7 +202,7 @@ app.get('/posts/:id', (req, res) => {
   .then((data) => {res.json(data);})
 });
 
-app.use((req, res) => {
+app.use('*', (req, res) => {
   res.render("404");
 });
 
