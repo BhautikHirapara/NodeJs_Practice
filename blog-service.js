@@ -217,7 +217,7 @@ exports.deletePostById = function(id){
     return new Promise((resolve, reject)=>{
         sequelize.sync().then(()=>{
             resolve(Post.destroy({
-                where: {PostId: id}
+                where: {postId: id}
             }));
         }).catch(()=>{
             reject("unable to delete Post");
@@ -230,7 +230,7 @@ exports.deleteCategoryById = function(id){
     return new Promise((resolve, reject)=>{
         sequelize.sync().then(()=>{
             resolve(Category.destroy({
-                where: {CategoryId: id}
+                where: {categoryId: id}
             }));
         }).catch(()=>{
             reject("unable to delete Category");

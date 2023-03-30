@@ -42,6 +42,7 @@ blogservice.initialize().then(() => {
   console.error(errmsg + "I'm from server.js");
 })
 
+
 app.get('/posts', function(req, res){
   if(req.query.category)  {
     blogservice.getPostByCategory(req.query.category)
