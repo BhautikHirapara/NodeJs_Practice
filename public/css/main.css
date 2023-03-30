@@ -21,3 +21,7 @@
   button {
     font: black;
   }
+
+  .navbar-brand{
+    font-size: larger;
+  }
