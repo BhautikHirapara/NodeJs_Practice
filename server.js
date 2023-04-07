@@ -10,6 +10,8 @@ var bodyParser = require("body-parser"); //Part3.Step1
 var exphbs = require('express-handlebars');
 const fs = require('fs')
 const stripJs = require('strip-js');
+const blogServiceAuth = require("./auth-service");
+const clientSessions = require('client-sessions');
 
 const PORT = process.env.PORT || 8080;
 app.use(express.static('public'));
@@ -37,13 +39,39 @@ function onHttpStart() {
   console.log("Express http server listening on " + PORT); 
 }
 
-blogservice.initialize().then(() => { 
-  app.listen(PORT, onHttpStart);}).catch((errmsg) => {
-  console.error(errmsg + "I'm from server.js");
+app.use(clientSessions({
+  cookieName: "session",
+  secret: "Prashant", 
+  duration: 2 * 60 * 1000, 
+  activeDuration: 1000 * 60 
 })
+);
 
 
-app.get('/posts', function(req, res){
+app.use(function (req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
+
+function ensureLogin(req, res, next) {
+  if (!req.session.user) {
+    res.redirect("/login");
+  } else {
+    next();
+  }
+};
+
+// blogservice.initialize().then(() => { 
+//   app.listen(PORT, onHttpStart);}).catch((errmsg) => {
+//   console.error(errmsg + "I'm from server.js");
+// })
+blogservice.initialize().then(blogServiceAuth.initialize()).then(() => {
+  app.listen(PORT, onHttpStart);
+}).catch((errmsg) => {
+  console.error(errmsg + " this is from server.js");
+});
+
+app.get('/posts', ensureLogin, function(req, res){
   if(req.query.category)  {
     blogservice.getPostByCategory(req.query.category)
     .then((data) => res.render("posts",{posts:data, message: "no results" }))
@@ -60,18 +88,18 @@ app.get('/posts', function(req, res){
 })
 
 
-app.get("/posts/add", async (req, res) => {
+app.get("/posts/add", ensureLogin, async (req, res) => {
   blogservice.getCategories()
   .then((data)=> res.render("addPost", {categories: data}))
   .catch(() => res.render("addPost", {categories: []}))
 });
 
-app.post("/post/update", function(req, res){
+app.post("/post/update", ensureLogin, function(req, res){
   blogservice.updatePost(req.body)
   .then(res.redirect('/posts'))
 });
 
-app.post("/posts/add", upload.single('image'), function (req, res) {
+app.post("/posts/add", ensureLogin, upload.single('image'), function (req, res) {
   console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
   blogservice.addpost(req.body)
   .then(res.redirect('/posts'))
@@ -181,7 +209,7 @@ app.get('/blog/:id', async (req, res) => {
   res.render("blog", {data: viewData,  message: "no results"})
 });
 
-app.get("/categories", function(req,res) {
+app.get("/categories", ensureLogin, function(req,res) {
   blogservice.getCategories().then(function(data) {
     res.render("category", { data });
   }).catch(function(err) {
@@ -189,7 +217,7 @@ app.get("/categories", function(req,res) {
   });
 });
 
-app.get('/posts/:id', (req, res) => {
+app.get('/posts/:id', ensureLogin, (req, res) => {
   blogservice.getPostById(req.params.id)
   .then((data) => {res.json(data);})
 });
@@ -232,11 +260,11 @@ app.use(function(req,res,next){
 
 // assi. 5
 
-app.get("/categories/add", function(req,res) {
+app.get("/categories/add", ensureLogin, function(req,res) {
   res.render("addCategory");
 });
 
-app.post("/categories/add", function(req,res) {
+app.post("/categories/add", ensureLogin, function(req,res) {
   blogservice.addCategory(req.body).then(function(data) {
     res.redirect('/categories');
   }).catch(function(err) {
@@ -244,7 +272,7 @@ app.post("/categories/add", function(req,res) {
   })
 });
 
-app.get("/categories/delete/:categoryId", function (req, res) {
+app.get("/categories/delete/:categoryId", ensureLogin, function (req, res) {
   blogservice.deleteCategoryById(req.params.id).then((data) => {
     res.redirect("/categories");
     console.log(data);
@@ -256,7 +284,7 @@ app.get("/categories/delete/:categoryId", function (req, res) {
   })
 })
 
-app.get("/posts/delete/:postId", function (req, res) {
+app.get("/posts/delete/:postId", ensureLogin, function (req, res) {
   blogservice.deletePostById(req.params.id).then((data) => {
     res.redirect("/posts");
     console.log(data);
@@ -267,6 +295,51 @@ app.get("/posts/delete/:postId", function (req, res) {
     });
   })
 })
+
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+
+app.post('/login', (req, res) => {
+  req.body.userAgent = req.get('User-Agent');
+  blogServiceAuth.checkUser(req.body)
+    .then((user) => {
+      req.session.user = {
+        userName: user.userName,
+        email: user.email,
+        loginHistory: user.loginHistory
+      }
+      res.redirect('/blog');
+    }).catch((err) => {
+      res.render('login', { errorMessage: err, userName: req.body.userName });
+    });
+});
+
+
+app.get("/register", (req, res) => {
+  res.render('register');
+});
+
+app.post("/register", (req, res) => {
+  blogServiceAuth.registerUser(req.body)
+    .then((value) => {
+      res.render('register', { successMessage: "User created" });
+    }).catch((err) => {
+      res.render('register', { errorMessage: err, userName: req.body.userName });
+    })
+});
+
+
+app.get("/logout", (req, res) => {
+  req.session.reset();
+  res.redirect('/');
+});
+
+
+app.get("/userHistory", ensureLogin, (req, res) => {
+  res.render('userHistory');
+});
 
 app.use((req, res) => {
   res.render("404");

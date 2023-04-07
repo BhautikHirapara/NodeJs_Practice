@@ -27,7 +27,7 @@
             </button>
             <a class="navbar-brand" href="#" style="font-size:x-large; margin-top: 16px"> WEB322 with Prashant Dilip Ghori </a>
           </div>
-       <h3><left>
+       {{!-- <h3><left>
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
             <ul class="nav navbar-nav" >
               {{#navLink "/about"}} About {{/navLink}}
@@ -43,7 +43,54 @@
 
     <div class="container">
         {{{body}}}
-    </div>
+    </div> --}}
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          {{#navLink "/about"}}About{{/navLink}}
+          {{#navLink "/blog"}}Blog{{/navLink}}
+        </ul>
+        {{#if session.user}}
+        <form class="navbar-form navbar-right">
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown">
+              <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;{{session.user.userName}}&nbsp;&nbsp;<span
+                class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="userMenu">
+              <li><a href="/userHistory">User History</a></li>
+              <li><a href="/logout">Log Out</a></li>
+            </ul>
+          </div>
+        </form>
+
+        <ul class="nav navbar-nav navbar-right">
+          {{#navLink "/posts"}}Post{{/navLink}}
+          {{#navLink "/categories"}}Category{{/navLink}}
+        </ul>
+        {{/if}}
+        {{#unless session.user}}
+
+
+        <form class="navbar-form navbar-right">
+          <a href="/register" class="btn btn-success"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Register</a>
+          <a href="/login" class="btn btn-primary"><span class="glyphicon glyphicon-chevron-right"></span>&nbsp;&nbsp;Log
+            In</a>
+        </form>
+        {{/unless}}
+
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+  <div class="container">
+    {{{body}}}
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
 
 </body>
 </html>
